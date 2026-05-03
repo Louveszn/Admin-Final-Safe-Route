@@ -1,0 +1,291 @@
+<div class="analytics-page">
+  <div class="header">
+    <h2>Incident Analytics Dashboard</h2>
+    <p class="subtitle">Analyze incidents by Date, Category, and Status</p>
+  </div>
+
+  <!-- Safest Barangay Banner (for barangay admins) -->
+  <ion-card class="safest-banner" color="success" *ngIf="showSafestBanner">
+    <ion-card-content>
+      <div class="banner-content">
+        <ion-icon name="trophy" class="trophy-icon"></ion-icon>
+        <div class="banner-text">
+          <h3>🎉 Congratulations!</h3>
+          <p>You're the <strong>Safest Barangay</strong> this week with only <strong>{{ safestBarangayCount }}</strong> incident(s)!</p>
+        </div>
+        <ion-button fill="clear" size="small" (click)="showSafestBanner = false">
+          <ion-icon name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filter Controls -->
+  <ion-card class="filter-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="filter-outline"></ion-icon>
+        Filters
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="filters-grid">
+        <!-- Date Filter -->
+        <div class="filter-item">
+          <label>Date</label>
+          <ion-select
+            interface="popover"
+            placeholder="All Dates"
+            [(ngModel)]="selectedDate"
+            (ngModelChange)="onFilterChange()">
+            <ion-select-option value="">All Dates</ion-select-option>
+            <ion-select-option *ngFor="let date of uniqueDates" [value]="date">
+              {{ date }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-item">
+          <label>Category</label>
+          <ion-select
+            interface="popover"
+            placeholder="All Categories"
+            [(ngModel)]="selectedCategory"
+            (ngModelChange)="onFilterChange()">
+            <ion-select-option value="">All Categories</ion-select-option>
+            <ion-select-option *ngFor="let cat of uniqueCategories" [value]="cat">
+              {{ cat }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-item">
+          <label>Status</label>
+          <ion-select
+            interface="popover"
+            placeholder="All Statuses"
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="onFilterChange()">
+            <ion-select-option value="">All Statuses</ion-select-option>
+            <ion-select-option *ngFor="let status of uniqueStatuses" [value]="status">
+              {{ status }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+
+        <!-- Barangay Filter (Super Admin Only) -->
+        <div class="filter-item" *ngIf="role === 'super_admin'">
+          <label>Barangay</label>
+          <ion-select
+            interface="popover"
+            placeholder="All Barangays"
+            [(ngModel)]="selectedBarangay"
+            (ngModelChange)="onFilterChange()">
+            <ion-select-option value="">All Barangays</ion-select-option>
+            <ion-select-option *ngFor="let brgy of uniqueBarangays" [value]="brgy">
+              {{ brgy }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="filter-item">
+          <label style="opacity: 0;">Clear</label>
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            (click)="clearFilters()"
+            [disabled]="!selectedDate && !selectedCategory && !selectedStatus && !selectedBarangay">
+            <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+            Clear Filters
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Active Filters Display -->
+      <div class="active-filters" *ngIf="selectedDate || selectedCategory || selectedStatus || selectedBarangay">
+        <span class="label">Active Filters:</span>
+        <ion-chip color="primary" *ngIf="selectedDate">
+          <ion-label>Date: {{ selectedDate }}</ion-label>
+          <ion-icon name="close-circle" (click)="selectedDate = ''; onFilterChange()"></ion-icon>
+        </ion-chip>
+        <ion-chip color="primary" *ngIf="selectedCategory">
+          <ion-label>Category: {{ selectedCategory }}</ion-label>
+          <ion-icon name="close-circle" (click)="selectedCategory = ''; onFilterChange()"></ion-icon>
+        </ion-chip>
+        <ion-chip color="primary" *ngIf="selectedStatus">
+          <ion-label>Status: {{ selectedStatus }}</ion-label>
+          <ion-icon name="close-circle" (click)="selectedStatus = ''; onFilterChange()"></ion-icon>
+        </ion-chip>
+        <ion-chip color="primary" *ngIf="selectedBarangay">
+          <ion-label>Barangay: {{ selectedBarangay }}</ion-label>
+          <ion-icon name="close-circle" (click)="selectedBarangay = ''; onFilterChange()"></ion-icon>
+        </ion-chip>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- KPI Summary Cards -->
+  <div class="kpi-grid">
+    <!-- Safest Barangay Card (Super Admin Only) -->
+    <ion-card class="kpi-card safest-card" *ngIf="role === 'super_admin'">
+      <ion-card-content>
+        <div class="kpi-icon" style="background: #fef3c7;">
+          <ion-icon name="trophy" style="color: #f59e0b;"></ion-icon>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ safestBarangay || 'N/A' }}</div>
+          <div class="kpi-label">Safest Barangay (Last 7 Days)</div>
+          <!-- <div class="kpi-sublabel" *ngIf="safestBarangay">{{ safestBarangayCount }} incident(s)</div> -->
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="kpi-card">
+      <ion-card-content>
+        <div class="kpi-icon" style="background: #dbeafe;">
+          <ion-icon name="document-text-outline" style="color: #3b82f6;"></ion-icon>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ totalIncidents }}</div>
+          <div class="kpi-label">Total Incidents</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="kpi-card">
+      <ion-card-content>
+        <div class="kpi-icon" style="background: #fef3c7;">
+          <ion-icon name="time-outline" style="color: #f59e0b;"></ion-icon>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ pendingCount }}</div>
+          <div class="kpi-label">Pending</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="kpi-card">
+      <ion-card-content>
+        <div class="kpi-icon" style="background: #dbeafe;">
+          <ion-icon name="checkmark-circle-outline" style="color: #3b82f6;"></ion-icon>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ verifiedCount }}</div>
+          <div class="kpi-label">Verified</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="kpi-card">
+      <ion-card-content>
+        <div class="kpi-icon" style="background: #d1fae5;">
+          <ion-icon name="checkmark-done-outline" style="color: #10b981;"></ion-icon>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ resolvedCount }}</div>
+          <div class="kpi-label">Resolved</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="charts-grid">
+    <!-- Incidents by Date -->
+    <ion-card class="chart-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="calendar-outline"></ion-icon>
+          Incidents by Date
+        </ion-card-title>
+        <ion-card-subtitle>Timeline view of all incidents</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="dateChart"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Incidents by Category -->
+    <ion-card class="chart-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="apps-outline"></ion-icon>
+          Incidents by Category
+        </ion-card-title>
+        <ion-card-subtitle>Distribution across categories</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Incidents by Status -->
+    <ion-card class="chart-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          Incidents by Status
+        </ion-card-title>
+        <ion-card-subtitle>Current status breakdown</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Data Table -->
+  <ion-card class="data-table-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="list-outline"></ion-icon>
+        Detailed Analytics Data
+      </ion-card-title>
+      <ion-card-subtitle>
+        Showing {{ filteredData.length }} record(s)
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="table-wrapper">
+        <table class="analytics-table" *ngIf="filteredData.length > 0">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th *ngIf="role === 'super_admin'">Barangay</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredData">
+              <td>{{ item.date }}</td>
+              <td *ngIf="role === 'super_admin'">{{ item.barangay }}</td>
+              <td>{{ item.category }}</td>
+              <td>
+                <ion-badge 
+                  [color]="item.status === 'Pending' ? 'warning' : item.status === 'Verified' ? 'primary' : 'success'">
+                  {{ item.status }}
+                </ion-badge>
+              </td>
+              <td><strong>{{ item.count }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="no-data" *ngIf="filteredData.length === 0">
+          <ion-icon name="analytics-outline"></ion-icon>
+          <p>No data available for the selected filters</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>

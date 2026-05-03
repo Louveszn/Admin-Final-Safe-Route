@@ -1,0 +1,73 @@
+<ion-content class="login-content" [fullscreen]="true">
+  <div class="login-wrapper">
+    <div class="login-box">
+      <h1>Admin Login</h1>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="field-label" for="email">Email</label>
+        <ion-item class="field" lines="none">
+          <ion-input
+            id="email"
+            [(ngModel)]="email" type="email"
+            placeholder="Enter your email"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="field-label" for="password">Password</label>
+        <ion-item class="field" lines="none">
+          <ion-input
+            id="password"
+            [(ngModel)]="password"
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Enter your password"
+          ></ion-input>
+
+          <!-- custom eye -->
+          <ion-icon
+            class="eye"
+            slot="end"
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+            (click)="togglePassword()"
+            aria-label="Toggle password visibility"
+          ></ion-icon>
+        </ion-item>
+      </div>
+
+      <ion-button expand="block" (click)="login()" [disabled]="loading">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </ion-button>
+
+      <!-- <h1>Admin Login</h1> -->
+
+      <!-- Email -->
+      <!-- <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input [(ngModel)]="email" type="email"></ion-input>
+      </ion-item> -->
+
+      <!-- Password -->
+      <!-- <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input 
+          [(ngModel)]="password" 
+          [type]="showPassword ? 'text' : 'password'">
+        </ion-input>
+        <ion-icon 
+          slot="end" 
+          [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+          (click)="togglePassword()"
+          style="cursor: pointer;">
+        </ion-icon>
+      </ion-item> -->
+
+      <!-- Login button -->
+      <!-- <ion-button expand="block" (click)="login()" [disabled]="loading">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </ion-button> -->
+    </div>
+  </div>
+</ion-content>

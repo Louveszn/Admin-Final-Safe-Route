@@ -1,0 +1,445 @@
+.page { display:flex; 
+  flex-direction:column; 
+  gap:12px;
+}
+
+/* ====== Layout ====== */
+.page-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px;
+  background:#f6f8fb;
+  border-radius:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+
+.title-row{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.title-row h2{
+  margin:0;
+  color:#182f58;
+  font:700 24px/1.15 'Poppins', system-ui, sans-serif;
+  
+}
+
+/* Right column (button + legend + user) */
+.right-actions{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;               /* wrap nicely on narrow widths */
+  min-width:max(260px, 30%);
+  justify-content:flex-end;
+}
+
+/* ====== Chips ====== */
+.category-chips{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;              /* scroll horizontally on mobile */
+  padding-bottom:2px;           /* keeps scroll bar off content */
+  scrollbar-width:thin;
+}
+.category-chips::-webkit-scrollbar{ height:6px; }
+.category-chips::-webkit-scrollbar-thumb{
+  background:rgba(24,47,88,.25);
+  border-radius:4px;
+}
+
+/* Base chip style */
+.category-chips ion-chip.cat{
+  --padding-start:10px;
+  --padding-end:10px;
+  --color:#182f58;
+  --background:#ffffff;
+  --border-color:#d7dee7;
+  border:1px solid var(--border-color);
+  border-radius:999px;
+  font-weight:600;
+  letter-spacing:.2px;
+  transition:transform .08s ease, box-shadow .18s ease, background .18s ease, color .18s ease, border-color .18s ease;
+  user-select:none;
+  cursor:pointer;
+}
+
+.category-chips ion-chip.cat:active{ transform:scale(.98); }
+
+/* Selected state (filled) */
+.category-chips ion-chip.cat.selected{
+  color:#fff;
+  border-color:transparent;
+  box-shadow:0 6px 14px rgba(24,47,88,.18);
+}
+
+/* Outline state (ionic [outline] or not selected) */
+.category-chips ion-chip.cat[outline],
+.category-chips ion-chip.cat:not(.selected){
+  background:#ffffff;
+}
+
+/* ====== Per-category colors ====== */
+/* Fallback navy if a class is missing */
+.category-chips ion-chip.cat.selected{ --background:#182f58; }
+
+.category-chips ion-chip.chip-theft.selected      { --background:#0041c2; } /* teal */
+.category-chips ion-chip.chip-assault.selected    { --background:#ffa500; } /* red */
+.category-chips ion-chip.chip-flood.selected      { --background:#87ceeb; } /* blue */
+.category-chips ion-chip.chip-car.selected        { --background:#ee4b2b; } /* amber */
+.category-chips ion-chip.chip-blocked.selected    { --background:#e5e500; } /* gray */
+.category-chips ion-chip.chip-kid.selected        { --background:#6a329f; } /* purple */
+.category-chips ion-chip.chip-fire.selected       { --background:#dc4d01; } /* deep red */
+.category-chips ion-chip.chip-animal.selected     { --background:#964b00; } /* green */
+.category-chips ion-chip.chip-rob.selected        { --background:#06402b; } /* sky */
+
+/* Outline border colors to match accents (optional) */
+.category-chips ion-chip.chip-theft[outline]      { border-color:#0d9488; color:#0d9488; }
+.category-chips ion-chip.chip-assault[outline]    { border-color:#ef4444; color:#ef4444; }
+.category-chips ion-chip.chip-flood[outline]      { border-color:#2563eb; color:#2563eb; }
+.category-chips ion-chip.chip-car[outline]        { border-color:#f59e0b; color:#b45309; }
+.category-chips ion-chip.chip-blocked[outline]    { border-color:#6b7280; color:#374151; }
+.category-chips ion-chip.chip-kid[outline]        { border-color:#7c3aed; color:#6d28d9; }
+.category-chips ion-chip.chip-fire[outline]       { border-color:#dc2626; color:#b91c1c; }
+.category-chips ion-chip.chip-animal[outline]     { border-color:#16a34a; color:#15803d; }
+.category-chips ion-chip.chip-rob[outline]        { border-color:#0ea5e9; color:#0369a1; }
+
+/* ====== Tap button ====== */
+.tap-btn{
+  --background:#182f58;
+  --background-activated:#143660;
+  --color:#fff;
+  --border-radius:999px;
+  --padding-start:16px;
+  --padding-end:16px;
+  font-weight:700;
+  letter-spacing:.4px;
+  height:40px;
+  box-shadow:0 8px 18px rgba(24,47,88,.16);
+}
+.tap-btn:active{ transform:scale(.98); }
+
+// /* ====== Legend card ====== */
+// .legend-card{
+//   background:#ffffff;
+//   border:1px solid #e5e9f2;
+//   border-radius:10px;
+//   padding:10px 12px;
+//   min-width:160px;
+//   box-shadow:0 6px 14px rgba(0,0,0,.06);
+// }
+// .legend-title{
+//   font:700 12px/1 'Poppins', system-ui, sans-serif;
+//   color:#182f58;
+//   margin-bottom:8px;
+//   text-transform:uppercase;
+//   letter-spacing:.4px;
+// }
+// .legend-row{
+//   display:flex; align-items:center; gap:8px;
+//   color:#334155; font-weight:600; font-size:13px; margin:6px 0;
+// }
+// .legend-row .box{
+//   width:14px; height:14px; border-radius:3px; display:inline-block;
+// }
+// .legend-row .box.low{ background:#fff000; }  
+// .legend-row .box.med{ background:#ffa500; }   
+// .legend-row .box.hi { background:#ef4444; }   
+
+/* ====== User pill ====== */
+.user-pill{
+  display:flex; 
+  align-items:center; 
+  gap:8px;
+  height: 2.6rem;
+  background:#ffffff;
+  border:2px solid #e6e8ee;
+  color:#182f58;
+  border-radius:8px;
+  padding: 0.3rem 0.75rem;
+  font-weight:700;
+
+  white-space:nowrap;
+}
+.user-pill ion-icon{
+  font-size:20px;
+  color:#182f58;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 900px){
+  .page-header{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .right-actions{
+    justify-content:flex-start;
+  }
+}
+
+
+.box.low { 
+  background:#ffff00; 
+} 
+
+.box.med { 
+  background:#ffa500; 
+} 
+
+.box.hi { 
+  background:#ff0000; 
+}
+
+.tap-btn {
+  --background: #e6f0ff; /* soft pastel blue */
+  --background-activated: #d9e8ff;
+  --color: #1e3a8a;
+  --border-radius: 8px;
+  --padding-top: 0.3rem;
+  --padding-bottom: 0.3rem;
+  --padding-start: 0.75rem;
+  --padding-end: 0.75rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  height: 2rem;
+  line-height: 1rem;
+  text-transform: none;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+  }
+
+  &.button-solid {
+    background: var(--background);
+  }
+
+  &.button-clear {
+    background: transparent;
+  }
+}
+
+
+/* Ensure the map container is a positioning context */
+.map-card {
+  position: relative;
+}
+
+/* The Leaflet host should fill the card */
+.leaflet-host, #map {
+  height:75vh; 
+  width:100%;        /* example safeguard */
+}
+
+/* The `.coord-readout` class is styling an element that likely displays coordinate information. It
+sets the font size to 0.9rem (which is equivalent to 90% of the parent element's font size) and the
+text color to #374151 (a shade of dark gray). */
+.coord-readout { 
+  font-size:.9rem; 
+  color:#182f58; 
+}
+
+ion-item.rounded { 
+  --border-radius:10px; 
+  --inner-padding-start:12px; 
+  --inner-padding-end:12px; 
+  margin-bottom:10px; 
+}
+
+
+/* Legend overlay (top-right) */
+.legend-card {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;               /* above Leaflet tiles/controls */
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(2px);
+  border: 1px solid #e6e8ee;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  padding: 10px 12px;
+  color: #182f58;
+  pointer-events: auto;        /* keep it interactive; set to none if purely decorative */
+}
+
+/* Legend content */
+.legend-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.2;
+  margin: 4px 0;
+}
+
+.legend-row .box {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid #cfd6e0;
+}
+
+.legend-card {
+  .box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border-radius: 3px;
+    
+    &.low {
+      background-color: #ffff00;
+    }
+    
+    &.med {
+      background-color: #ffa500;
+    }
+    
+    &.hi {
+      background-color: #ff0000;
+    }
+    
+    &.boundary {
+      background: repeating-linear-gradient(
+        90deg,
+        #ff4d4f 0px,
+        #ff4d4f 6px,
+        transparent 6px,
+        transparent 12px
+      );
+      border: 2px solid #ff4d4f;
+      background-color: transparent;
+    }
+    &.res{
+      background-color: #88e788;
+    }
+  }
+}
+
+// /* Your level colors */
+// .legend-row .box.low {  background: #ffff00; }
+// .legend-row .box.med {  background: #ffa500; }
+// .legend-row .box.hi  {  background: #ef4444; }
+
+.report-modal ion-content ion-label, 
+.report-modal ion-content ion-select-option,
+.report-modal ion-content ion-select,
+.report-modal ion-input,
+.report-modal ion-textarea,
+.report-modal ion-label,
+.report-modal .fixed-text::placeholder{
+  color: #182f58;
+}
+
+.barangay-picker{
+  --background: #5facb6;
+  --border-radius: 10px;
+  color: #ffffff;
+}
+ion-select::part(icon){
+  stroke: #ffffff;
+  fill: #ffffff;
+}
+
+.barangay-picker ion-label{
+  margin-right: 7px;
+}
+
+
+
+
+
+
+// .map-card { 
+//   position: relative;
+//   border-radius:10px; 
+//   overflow:hidden; 
+//   box-shadow:0 8px 24px rgba(0,0,0,.08); 
+// }
+
+// .leaflet-host { 
+//   height:72vh; 
+//   width:100%; 
+// }
+
+// .coord-readout { 
+//   font-size:.9rem; 
+//   color:#374151; 
+// }
+
+// ion-item.rounded { 
+//   --border-radius:10px; 
+//   --inner-padding-start:12px; 
+//   --inner-padding-end:12px; 
+//   margin-bottom:10px; 
+// }
+
+
+
+// /* Legend overlay (top-right) */
+// .legend-card {
+//   position: absolute;
+//   top: 12px;
+//   right: 12px;
+//   z-index: 1000;               /* above Leaflet tiles/controls */
+//   background: rgba(255, 255, 255, 0.96);
+//   backdrop-filter: blur(2px);
+//   border: 1px solid #e6e8ee;
+//   border-radius: 10px;
+//   box-shadow: 0 6px 16px rgba(0,0,0,.08);
+//   padding: 10px 12px;
+//   color: #182f58;
+//   pointer-events: auto;        /* keep it interactive; set to none if purely decorative */
+// }
+
+// /* Legend content */
+// .legend-title {
+//   font-weight: 700;
+//   font-size: 13px;
+//   margin-bottom: 6px;
+// }
+
+// .legend-row {
+//   display: flex;
+//   align-items: center;
+//   gap: 8px;
+//   font-size: 12px;
+//   line-height: 1.2;
+//   margin: 4px 0;
+// }
+
+// .legend-row .box {
+//   width: 14px;
+//   height: 14px;
+//   border-radius: 3px;
+//   border: 1px solid #cfd6e0;
+// }
+
+// /* Your level colors */
+// .legend-row .box.low {  background: #a3e635; }
+// .legend-row .box.med {  background: #facc15; }
+// .legend-row .box.hi  {  background: #ef4444; }
+
+// /* Optional: tighter placement on very small screens */
+// @media (max-width: 420px) {
+//   .legend-card {
+//     top: 8px;
+//     right: 8px;
+//     padding: 8px 10px;
+//   }
+// }

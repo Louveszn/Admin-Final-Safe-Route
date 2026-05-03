@@ -1,0 +1,162 @@
+<div class="page">
+  <div class="page-header">
+    <div class="title-row">
+      <h2>Danger Zones</h2>
+
+      <!-- MULTI-SELECT CATEGORY CHIPS (map filter) -->
+      <div class="category-chips">
+        <ion-chip id="cat-Theft" class="cat chip-theft" (click)="toggleCategory('Theft')" [outline]="!isSelected('Theft')" [class.selected]="isSelected('Theft')">
+          <ion-label>Theft</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-Assault" class="cat chip-assault" (click)="toggleCategory('Assault')" [outline]="!isSelected('Assault')" [class.selected]="isSelected('Assault')">
+          <ion-label>Assault</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-Flood" class="cat chip-flood" (click)="toggleCategory('Flood')" [outline]="!isSelected('Flood')" [class.selected]="isSelected('Flood')">
+          <ion-label>Flood</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-CarAccident" class="cat chip-car" (click)="toggleCategory('Car Accident')" [outline]="!isSelected('Car Accident')" [class.selected]="isSelected('Car Accident')">
+          <ion-label>Car Accident</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-BlockedLane" class="cat chip-blocked" (click)="toggleCategory('Blocked Lane')" [outline]="!isSelected('Blocked Lane')" [class.selected]="isSelected('Blocked Lane')">
+          <ion-label>Blocked Lane</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-Kidnapping" class="cat chip-kid" (click)="toggleCategory('Kidnapping')" [outline]="!isSelected('Kidnapping')" [class.selected]="isSelected('Kidnapping')">
+          <ion-label>Kidnapping</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-Fire" class="cat chip-fire" (click)="toggleCategory('Fire')" [outline]="!isSelected('Fire')" [class.selected]="isSelected('Fire')">
+          <ion-label>Fire</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-AnimalAttack" class="cat chip-animal" (click)="toggleCategory('Animal Attack')" [outline]="!isSelected('Animal Attack')" [class.selected]="isSelected('Animal Attack')">
+          <ion-label>Animal Attack</ion-label>
+        </ion-chip>
+        <ion-chip id="cat-Robbery" class="cat chip-rob" (click)="toggleCategory('Robbery')" [outline]="!isSelected('Robbery')" [class.selected]="isSelected('Robbery')">
+          <ion-label>Robbery</ion-label>
+        </ion-chip>
+      </div>
+
+      <!-- Hover popovers for map chips -->
+      <ion-popover trigger="cat-Theft" triggerAction="hover" *ngIf="isSelected('Theft')"><ng-template><ion-content class="ion-padding"><b>Theft</b><div>Pickpocketing, Shoplifting, Burglary, Vehicle Theft</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-Assault" triggerAction="hover" *ngIf="isSelected('Assault')"><ng-template><ion-content class="ion-padding"><b>Assault</b><div>Physical Attack, Verbal Abuse, Harassment, Battery</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-Flood" triggerAction="hover" *ngIf="isSelected('Flood')"><ng-template><ion-content class="ion-padding"><b>Flood</b><div>Flash Flood, Street Flooding, River Overflow, Heavy Rain</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-CarAccident" triggerAction="hover" *ngIf="isSelected('Car Accident')"><ng-template><ion-content class="ion-padding"><b>Car Accident</b><div>Collision, Hit-and-Run, Vehicle Crash, Motorcycle Accident</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-BlockedLane" triggerAction="hover" *ngIf="isSelected('Blocked Lane')"><ng-template><ion-content class="ion-padding"><b>Blocked Lane</b><div>Road Construction, Parked Vehicle, Debris, Traffic Jam</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-Kidnapping" triggerAction="hover" *ngIf="isSelected('Kidnapping')"><ng-template><ion-content class="ion-padding"><b>Kidnapping</b><div>Child Abduction, Missing Person, Forced Detention</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-Fire" triggerAction="hover" *ngIf="isSelected('Fire')"><ng-template><ion-content class="ion-padding"><b>Fire</b><div>House Fire, Vehicle Fire, Wildfire, Electrical Fire</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-AnimalAttack" triggerAction="hover" *ngIf="isSelected('Animal Attack')"><ng-template><ion-content class="ion-padding"><b>Animal Attack</b><div>Dog Bite, Stray Animals, Wildlife Encounter, Snake</div></ion-content></ng-template></ion-popover>
+      <ion-popover trigger="cat-Robbery" triggerAction="hover" *ngIf="isSelected('Robbery')"><ng-template><ion-content class="ion-padding"><b>Robbery</b><div>Armed Robbery, Mugging, Home Invasion, Store Holdup</div></ion-content></ng-template></ion-popover>
+    </div>
+
+    <div class="right-actions">
+      <div class="user-pill">
+        <ion-icon name="person-circle-outline"></ion-icon>
+        <span>Hello, {{ barangay }}</span>
+      </div>
+      <ion-button class="tap-btn" (click)="toggleTap()">{{ tapEnabled ? 'CANCEL TAP' : 'TAP TO REPORT' }}</ion-button>
+    </div>
+  </div>
+
+  <div class="map-card">
+    <div id="map" class="leaflet-host"></div>
+    <div class="legend-card">
+      <div class="legend-title">Cluster Danger Level</div>
+      <div class="legend-row"><span class="box low"></span> Low</div>
+      <div class="legend-row"><span class="box med"></span> Medium</div>
+      <div class="legend-row"><span class="box hi"></span> High</div>
+      <div class="legend-row"><span class="box boundary"></span> Barangay Boundary</div>
+      <div class="legend-row"><span class="box res"></span> Resolved Incident</div>
+    </div>
+  </div>
+
+  <div class="coord-readout" *ngIf="lastLatLng">
+    Selected: <b>{{ lastLatLng.lat.toFixed(6) }}</b>, <b>{{ lastLatLng.lng.toFixed(6) }}</b>
+  </div>
+</div>
+
+<!-- Report Modal -->
+<ion-modal class="report-modal" [isOpen]="reportOpen" (didDismiss)="closeReport()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>New Report</ion-title>
+        <ion-buttons slot="end"><ion-button (click)="closeReport()">Close</ion-button></ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-list lines="none">
+        <!-- CATEGORY: custom picker with hover samples -->
+        <ion-item class="rounded">
+          <ion-label position="stacked">Category</ion-label>
+          <ion-input
+            readonly
+            [value]="form.category || ''"
+            placeholder="Choose category"
+            (click)="openCategoryPicker($event)">
+          </ion-input>
+        </ion-item>
+
+        <!-- Popover list of categories -->
+        <ion-popover [isOpen]="catPickerOpen" [event]="catPickerEvent" (didDismiss)="catPickerOpen=false" arrow="true">
+          <ng-template>
+            <ion-content class="ion-padding pop-list">
+              <ion-list>
+                <ion-item
+                  *ngFor="let c of CATEGORY_LIST"
+                  button
+                  detail="false"
+                  [id]="'pick-'+c.key"
+                  (click)="selectCategory(c)">
+                  <ion-label>
+                    <h3>{{ c.name }}</h3>
+                    <p style="font-size: 12px; color: #666; margin-top: 4px;">
+                      {{ c.samples.join(', ') }}
+                    </p>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+
+        <ion-item class="rounded">
+          <ion-label position="stacked">Barangay</ion-label>
+          <ion-input [value]="barangay" disabled="true"></ion-input>
+        </ion-item>
+
+
+        <ion-item class="rounded">
+          <ion-label position="stacked">
+            <div class="label-row" style="justify-content: flex-start; gap: 6px;">
+              <span>Description</span>
+              <span class="char-count"
+                *ngIf="(form.description?.length ?? 0) > 0"
+                [class.at-limit]="(form.description?.length ?? 0) >= DESCRIPTION_MAX">
+                {{ form.description?.length || 0 }}/{{ DESCRIPTION_MAX }}
+              </span>
+            </div>
+          </ion-label>
+          <ion-textarea [(ngModel)]="form.description" auto-grow="true" [maxlength]="DESCRIPTION_MAX"></ion-textarea>
+        </ion-item>
+
+        <ion-item class="rounded">
+          <ion-label position="stacked">Date & Time</ion-label>
+          <ion-input [value]="nowPreview" disabled="true"></ion-input>
+        </ion-item>
+
+        <ion-item class="rounded">
+          <ion-label position="stacked">Coordinates</ion-label>
+          <ion-input [value]="coordText" disabled="true"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="closeReport()">Cancel</ion-button>
+          <ion-button strong="true" (click)="saveReport()">Save</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,225 @@
+<div class="page">
+<div class="reports-header">
+    <h2>Reports</h2>
+  </div>
+
+  <!-- Tabs + Filters -->
+  <div class="tabs-strip">
+    <div class="tabs">
+      <button class="tab" [class.active]="activeTab==='pending'" (click)="setTab('pending')">Pending</button>
+      <button class="tab" [class.active]="activeTab==='verified'" (click)="setTab('verified')">Verified</button>
+      <button class="tab" [class.active]="activeTab==='resolved'" (click)="setTab('resolved')">Resolved</button>
+      <button class="tab" [class.active]="activeTab==='rejected'" (click)="setTab('rejected')">Rejected</button>
+    </div>
+
+    <div class="right">
+      <!-- Super Admin: Barangay Filter -->
+      <select
+        *ngIf="role==='super_admin'"
+        class="brgy-filter"
+        [(ngModel)]="selectedBarangay"
+        (ngModelChange)="onBarangayChange($event)"
+        aria-label="Filter by Barangay"
+      >
+        <option *ngFor="let b of barangayOptions" [ngValue]="b">{{ b }}</option>
+      </select>
+
+      <!-- Month Filter -->
+      <select
+        class="month-filter"
+        [(ngModel)]="selectedMonth"
+        (ngModelChange)="onMonthChange($event)"
+        aria-label="Filter by Month"
+      >
+        <option *ngFor="let m of monthOptions" [ngValue]="m">{{ m }}</option>
+      </select>
+
+      <!-- Year Filter -->
+      <select
+        class="year-filter"
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="onYearChange($event)"
+        aria-label="Filter by Year"
+      >
+        <option *ngFor="let y of yearOptions" [ngValue]="y">{{ y }}</option>
+      </select>
+
+      
+
+
+      <!-- PRINT BUTTON -->
+      <button class="print-btn no-print" (click)="printReports()">
+        🖨️ Print
+      </button>
+
+      <div class="record-count">
+      Total: <strong>{{ (filtered$ | async)?.length || 0 }}</strong> record{{ (filtered$ | async)?.length === 1 ? '' : 's' }}
+      </div>
+
+      <input
+        class="search-bar"
+        type="text"
+        placeholder="Search"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch(searchTerm)"
+        aria-label="Search reports"
+      />
+    </div>
+  </div>
+
+<div id="print-area">
+  <!-- Table -->
+  <div class="reports-table">
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>{{ role === 'super_admin' ? 'Barangay' : 'Your Barangay' }}</th>
+            <th>Description</th>
+            <th class="col-date">Date</th>
+            <th class="col-time">Time</th>
+            <th class="col-actions no-print">Actions</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let r of filtered$ | async">
+            <td><strong>{{ r.category }}</strong></td>
+            <td>
+              <ng-container *ngIf="role === 'barangay_admin'; else superAdminLoc">
+                {{ barangay }}
+              </ng-container>
+              <ng-template #superAdminLoc>
+                {{ r.barangay || '—' }}
+              </ng-template>
+            </td>
+            <td class="truncate" [title]="r.description || ''">
+              {{ r.description || 'No description' }}
+            </td>
+            <td class="mono">{{ dateOnly(r.datetime) }}</td>
+            <td class="mono">{{ timeOnly(r.datetime) }}</td>
+            <td class="actions-cell no-print">
+              <button class="btn view" (click)="openSummary(r)">View</button>
+              <button class="btn delete" (click)="deleteReport(r.id)">Delete</button>
+            </td>
+           <td>
+              <span [ngClass]="badgeClass(r.status)">{{ r.status || 'pending' }}</span>
+          </td>
+          </tr>
+
+          <tr *ngIf="(filtered$ | async)?.length === 0">
+            <td colspan="8" class="empty">No reports found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== Incident Summary Modal ===== -->
+<ion-modal [isOpen]="summaryOpen" (didDismiss)="closeSummary()">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <div class="summary-box" *ngIf="selected">
+        <h2 class="summary-title">Incident Report</h2>
+
+        <div class="summary-grid">
+          <!-- Reporter Information -->
+          <div class="summary-section-header">
+            <h3>Reporter Information</h3>
+          </div>
+
+          <div class="summary-row">
+            <span class="label">First Name</span>
+            <span class="value">{{ getReporterInfo().firstName }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Last Name</span>
+            <span class="value">{{ getReporterInfo().lastName }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Email</span>
+            <span class="value">{{ getReporterInfo().email }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Address</span>
+            <span class="value">{{ getReporterInfo().address }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Contact #</span>
+            <span class="value">{{ getReporterInfo().contact }}</span>
+          </div>
+
+          <!-- Incident Details -->
+          <div class="summary-section-header">
+            <h3>Incident Details</h3>
+          </div>
+
+          <div class="summary-row" *ngFor="let field of [
+            {label:'Category', value:selected.category},
+            {label:'Barangay', value:selected.barangay},
+            {label:'Description', value:selected.description || 'No description provided'},
+            {label:'Date', value:dateOnly(selected.datetime)},
+            {label:'Time', value:timeOnly(selected.datetime)},
+            {label:'Coordinates', value:selected.lat && selected.lng ? selected.lat.toFixed(6)+', '+selected.lng.toFixed(6) : '—'}
+          ]">
+            <span class="label">{{ field.label }}</span>
+            <span class="value">{{ field.value }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="label">Status</span>
+            <span class="value">
+              <span [ngClass]="badgeClass(selected.status)">{{ selected.status || 'pending' }}</span>
+            </span>
+          </div>
+        </div> 
+
+        <!-- Actions (outside .summary-grid) -->
+        <div class="modal-actions">
+          <ng-container *ngIf="activeTab !== 'resolved'">
+            <!-- Rejected tab: Delete only -->
+            <ng-container *ngIf="activeTab === 'rejected'; else normalActions">
+              <ion-button size="small" color="danger" (click)="confirmDelete(selected.id)">Delete</ion-button>
+            </ng-container>
+
+            <!-- Normal actions -->
+            <ng-template #normalActions>
+              <ion-button
+                size="small"
+                color="danger"
+                *ngIf="(selected.status || 'pending') !== 'rejected'"
+                (click)="confirmStatusChange(selected, 'rejected')">
+                Reject
+              </ion-button>
+
+              <ion-button
+                size="small"
+                color="warning"
+                *ngIf="(selected.status || 'pending') === 'pending'"
+                (click)="confirmStatusChange(selected, 'verified')">
+                Verify
+              </ion-button>
+
+              <ion-button
+                size="small"
+                color="success"
+                *ngIf="(selected.status || 'pending') !== 'resolved'"
+                (click)="confirmStatusChange(selected, 'resolved')">
+                Resolve
+              </ion-button>
+            </ng-template>
+          </ng-container>
+
+          <!-- Close Button -->
+          <ion-button size="small" color="medium" (click)="closeSummary()" class="close-btn">
+            Close
+          </ion-button>
+        </div>
+      </div> 
+    </ion-content>
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,92 @@
+/* Page bg */
+ion-content.login-content { --background: #f3f4f6; }
+
+/* Center the card */
+.login-wrapper {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.login-box {
+  width: 100%;
+  max-width: 500px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 16px 44px rgba(16, 24, 40, 0.08);
+  padding: 44px 36px 36px;
+}
+.login-box h1 {
+  margin: 0 0 28px;
+  color: #182f58;
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 42px);
+  text-align: center;
+}
+
+/* Form blocks */
+.form-group { margin-bottom: 18px; }
+.field-label {
+  display: block;
+  margin: 0 0 8px;
+  color: #182f58;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Input container that looks like your rounded field */
+.field {
+  --inner-border-width: 0;
+  --background: #f7f8fa;
+  --padding-start: 0;
+  --inner-padding-start: 16px;
+  --inner-padding-end: 16px;
+  --highlight-color-focused: transparent;
+  background: var(--background);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 64px;
+  display: flex;
+  align-items: center; /* centers the input text vertically */
+  position: relative;
+}
+
+/* Input text */
+.field ion-input {
+  --padding-start: 4px;
+  --padding-end: 44px;          /* room for the eye */
+  --color: #193056;
+  --placeholder-color: #94a3b8;
+  font-size: 16px;
+}
+
+/* Eye icon aligned to the middle-right */
+.field .eye {
+  font-size: 22px;
+  color: #193056;
+  margin-left: auto;            /* push to right */
+  align-self: center;           /* vertical center */
+  cursor: pointer;
+}
+
+/* Focus state on container */
+.field:focus-within {
+  border-color: #cfd7e3;
+  box-shadow: 0 0 0 3px rgba(24, 47, 88, 0.10);
+}
+
+/* Remove native reveal button (Edge/IE) */
+input::-ms-reveal,
+input::-ms-clear { display: none; }
+
+/* Button style */
+.login-box ion-button {
+  --background: #162c53;
+  --background-activated: #12284c;
+  --border-radius: 12px;
+  --box-shadow: 0 10px 26px rgba(22, 44, 83, 0.25);
+  height: 56px;
+  font-weight: 600;
+  font-size: 18px;
+}
+.login-box ion-button[disabled] { opacity: .65; }
